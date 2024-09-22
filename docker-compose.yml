@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres-db
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    restart: always
+
+  node-red:
+    image: nodered/node-red
+    environment:
+      - TZ=America/Bogota
+    volumes:
+      - node-red-data:/data
+    ports:
+      - '1880:1880'
+    restart: always
+
+volumes:
+  postgres-data:
+  node-red-data:
