@@ -1,7 +1,6 @@
-import { UserDTO } from "../dto";
-
+import { UserDTO } from '../dto';
 
 export interface LoginResponse {
-    user: UserDTO;
-    token: string;
+  user: UserDTO;
+  token: string;
 }

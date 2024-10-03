@@ -17,4 +17,4 @@ import { ProcessModule } from './process/process.module';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

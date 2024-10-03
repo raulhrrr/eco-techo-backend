@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import * as bcryptjs from 'bcryptjs';
@@ -10,20 +16,19 @@ import { User } from '../entities/user.entity';
 
 @Injectable()
 export class AuthService implements IAuthService {
-
   constructor(
     @InjectModel(User)
-    private userModel: typeof User,
+    private readonly userModel: typeof User,
 
-    private jwtService: JwtService,
-  ) { }
+    private readonly jwtService: JwtService,
+  ) {}
 
   async register(registerDto: RegisterUserDto): Promise<LoginResponse> {
     try {
       const { password, ...userData } = registerDto;
       const newUser = await this.userModel.create({
         password: bcryptjs.hashSync(password, 10),
-        ...userData
+        ...userData,
       });
       return this.getResponse(newUser);
     } catch (error) {
@@ -51,7 +56,7 @@ export class AuthService implements IAuthService {
     const { password: _, ...userData } = user.toJSON();
     return {
       user: userData,
-      token: this.getJwtToken({ id: user.id })
+      token: this.getJwtToken({ id: user.id }),
     };
   }
 

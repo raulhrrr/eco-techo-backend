@@ -20,7 +20,6 @@ import { User } from './entities/user.entity';
       secret: process.env.JWT_SEED,
       signOptions: { expiresIn: '8h' },
     }),
-
-  ]
+  ],
 })
-export class AuthModule { }
+export class AuthModule {}

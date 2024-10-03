@@ -2,9 +2,10 @@ import { Table, Column, Model, DataType } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 
 @Table({
-  tableName: 'tblUsers',
+  tableName: 'tblTelemetricData',
+  timestamps: false,
 })
-export class User extends Model<User> {
+export class TelemetricData extends Model<TelemetricData> {
   @Column({
     type: DataType.UUIDV4,
     defaultValue: uuidv4,
@@ -13,39 +14,33 @@ export class User extends Model<User> {
   id: string;
 
   @Column({
-    type: DataType.STRING,
-    unique: true,
+    type: DataType.FLOAT,
     allowNull: false,
   })
-  email: string;
+  temperature: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.FLOAT,
     allowNull: false,
   })
-  password: string;
+  humidity: number;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.FLOAT,
     allowNull: false,
   })
-  name: string;
+  pressure: number;
 
   @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: true,
-  })
-  isActive: boolean;
-
-  @Column({
-    type: DataType.DATE,
+    type: DataType.FLOAT,
     allowNull: false,
   })
-  createdAt: Date;
+  gas_resistance: number;
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
+    defaultValue: DataType.NOW,
   })
-  updatedAt: Date;
+  timestamp: Date;
 }
