@@ -2,10 +2,10 @@ import { Table, Column, Model, DataType } from 'sequelize-typescript';
 import { v4 as uuidv4 } from 'uuid';
 
 @Table({
-  tableName: 'tblTelemetricData',
+  tableName: 'tblTelemetryData',
   timestamps: false,
 })
-export class TelemetricData extends Model<TelemetricData> {
+export class TelemetryData extends Model<TelemetryData> {
   @Column({
     type: DataType.UUIDV4,
     defaultValue: uuidv4,

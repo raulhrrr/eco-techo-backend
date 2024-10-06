@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { AuthModule } from './auth/auth.module';
 import { sequelizeConfig } from './config/sequelize.config';
-import { ProcessModule } from './process/process.module';
+import { TelemetryModule } from './telemetry/telemetry.module';
 
 @Module({
   imports: [
@@ -12,9 +12,9 @@ import { ProcessModule } from './process/process.module';
     SequelizeModule.forRoot(sequelizeConfig),
 
     AuthModule,
-    ProcessModule,
+    TelemetryModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
