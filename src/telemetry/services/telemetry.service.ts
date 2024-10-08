@@ -1,10 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { TelemetryDataModel } from '../interfaces/telemetry-data';
+import { TelemetryDataFiltered, TelemetryDataModel } from '../interfaces/telemetry-data';
 import { TelemetryData } from '../entities/telemetry-data';
 import { InjectModel } from '@nestjs/sequelize';
 import { TelemetryProcessResponse } from '../interfaces/telemetry-process-response';
 import { Op, Sequelize } from 'sequelize';
-import { Fn } from 'sequelize/types/utils';
 
 @Injectable()
 export class TelemetryService {
@@ -29,21 +28,9 @@ export class TelemetryService {
     initDate: string,
     endDate: string,
     groupBy: 'day' | 'hour'
-  ): Promise<TelemetryData[]> {
+  ): Promise<TelemetryDataFiltered[]> {
     try {
-      let datePart: Fn;
-
-      if (groupBy === 'day') {
-        datePart = Sequelize.fn('DATE_TRUNC', 'day', Sequelize.col('timestamp'));
-      } else if (groupBy === 'hour') {
-        datePart = Sequelize.fn('DATE_TRUNC', 'hour', Sequelize.col('timestamp'));
-      }
-
-      const fromDate = new Date(initDate);
-      fromDate.setUTCHours(0, 0, 0, 0);
-
-      const toDate = new Date(endDate);
-      toDate.setUTCHours(23, 59, 59, 999);
+      let datePart = Sequelize.literal(`CAST(DATE_TRUNC('${groupBy}', "timestamp") AS VARCHAR)`);
 
       const telemetryData = await this.telemetryDataModel.findAll({
         attributes: [
@@ -54,15 +41,21 @@ export class TelemetryService {
           [Sequelize.fn('AVG', Sequelize.col('gas_resistance')), 'avg_gas_resistance'],
         ],
         where: {
-          timestamp: {
-            [Op.between]: [fromDate, toDate]
+          createdAt: {
+            [Op.between]: [initDate, endDate]
           },
         },
         group: ['groupedDate'],
         order: [[Sequelize.col('groupedDate'), 'ASC']],
       });
 
-      return telemetryData;
+      return telemetryData.map(data => ({
+        groupedDate: String(data.get('groupedDate')),
+        avg_temperature: Number(data.get('avg_temperature')),
+        avg_humidity: Number(data.get('avg_humidity')),
+        avg_pressure: Number(data.get('avg_pressure')),
+        avg_gas_resistance: Number(data.get('avg_gas_resistance')),
+      }));
     } catch (error) {
       throw new InternalServerErrorException('Error fetching telemetry data');
     }

@@ -42,5 +42,12 @@ export class TelemetryData extends Model<TelemetryData> {
     allowNull: false,
     defaultValue: DataType.NOW,
   })
+  createdAt?: Date;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+  })
   timestamp: Date;
 }

@@ -9,4 +9,15 @@ export const sequelizeConfig: SequelizeModuleOptions = {
   database: process.env.POSTGRES_DB,
   autoLoadModels: true,
   synchronize: true,
+  dialectOptions: {
+    useUTC: false,
+    dateStrings: true,
+    typeCast: function (field, next) {
+      if (['DATE', 'DATETIME', 'TIMESTAMP', 'TIMESTAMP WITH TIME ZONE'].includes(field.type)) {
+        return field.string()
+      }
+      return next()
+    },
+  },
+  timezone: '-05:00',
 };
