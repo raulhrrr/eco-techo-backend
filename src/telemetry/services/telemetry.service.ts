@@ -14,7 +14,9 @@ export class TelemetryService {
 
   async process(data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
     try {
-      const newTelemtricData = await this.telemetryDataModel.create(data);
+      const createdAt = new Date().toISOString().split('T')[0];
+      const newModel = { ...data, createdAt };
+      const newTelemtricData = await this.telemetryDataModel.create(newModel);
       return {
         id: newTelemtricData.id,
         message: 'Data saved successfully',

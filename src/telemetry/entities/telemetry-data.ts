@@ -38,11 +38,10 @@ export class TelemetryData extends Model<TelemetryData> {
   gas_resistance: number;
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.STRING,
     allowNull: false,
-    defaultValue: DataType.NOW,
   })
-  createdAt?: Date;
+  createdAt?: string;
 
   @Column({
     type: DataType.DATE,
