@@ -12,6 +12,7 @@ export class TelemetryGateway {
   emitTelemetryData(data: TelemetryDataModel) {
     const numberOfClients = this.server.sockets.sockets.size;
     if (numberOfClients > 0) {
+      console.log(`Emitting data to ${numberOfClients} clients`);
       this.server.emit('telemetryData', data);
     }
   }
