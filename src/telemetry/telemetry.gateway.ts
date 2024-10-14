@@ -10,6 +10,9 @@ export class TelemetryGateway {
   server: Server;
 
   emitTelemetryData(data: TelemetryDataModel) {
-    this.server.emit('telemetryData', data);
+    const numberOfClients = this.server.sockets.sockets.size;
+    if (numberOfClients > 0) {
+      this.server.emit('telemetryData', data);
+    }
   }
 }
