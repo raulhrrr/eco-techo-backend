@@ -1,4 +1,4 @@
 export interface TelemetryProcessResponse {
-  id: string;
+  id?: string;
   message: string;
 }

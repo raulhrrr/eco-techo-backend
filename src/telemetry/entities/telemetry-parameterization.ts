@@ -1,5 +1,4 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { v4 as uuidv4 } from 'uuid';
 
 @Table({
   tableName: 'tblTelemetryParameterization',
@@ -7,8 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class TelemetryParameterization extends Model<TelemetryParameterization> {
   @Column({
-    type: DataType.UUIDV4,
-    defaultValue: uuidv4,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
     primaryKey: true,
   })
   id: string;
@@ -43,4 +42,16 @@ export class TelemetryParameterization extends Model<TelemetryParameterization> 
     allowNull: false,
   })
   maxValue: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  lowerThreshold: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  upperThreshold: number;
 }

@@ -1,13 +1,12 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
-import { v4 as uuidv4 } from 'uuid';
 
 @Table({
   tableName: 'tblUsers',
 })
 export class User extends Model<User> {
   @Column({
-    type: DataType.UUIDV4,
-    defaultValue: uuidv4,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
     primaryKey: true,
   })
   id: string;
@@ -39,12 +38,14 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.DATE,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
   createdAt: Date;
 
   @Column({
     type: DataType.DATE,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
   updatedAt: Date;

@@ -1,30 +1,34 @@
 /* DROPS */
-DROP TABLE IF EXISTS "tblUsers";
+DROP TABLE IF EXISTS "tblAlertUser";
+
+DROP TABLE IF EXISTS "tblAlerts";
+
 DROP TABLE IF EXISTS "tblTelemetryData";
+
 DROP TABLE IF EXISTS "tblTelemetryParameterization";
 
+DROP TABLE IF EXISTS "tblUsers";
+
 /* TRUNCATES */
-TRUNCATE TABLE "tblUsers1";
-TRUNCATE TABLE "tblTelemetryData";
+DELETE FROM "tblAlertUser"
+
+DELETE FROM "tblAlerts" 
+
+DELETE FROM "tblTelemetryData" 
+
 TRUNCATE TABLE "tblTelemetryParameterization";
+
+TRUNCATE TABLE "tblUsers";
 
 /* CREATES */
 CREATE TABLE "tblUsers" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "email" VARCHAR(255) UNIQUE NOT NULL,
     "name" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255) NOT NULL,
     "isActive" BOOLEAN DEFAULT TRUE,
-    "createdAt" DATE NOT NULL,
-    "updatedAt" DATE NOT NULL
-);
-
-CREATE TABLE "tblTelemetryData" (
-    "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
-    "temperature" FLOAT NOT NULL,
-    "humidity" FLOAT NOT NULL,
-    "pressure" FLOAT NOT NULL,
-    "gasResistance" FLOAT NOT NULL,
-    "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE "tblTelemetryParameterization" (
@@ -32,39 +36,40 @@ CREATE TABLE "tblTelemetryParameterization" (
     "label" VARCHAR(50) UNIQUE NOT NULL,
     "initialValue" FLOAT NOT NULL,
     "append" VARCHAR(10) NOT NULL,
-    "minValue" FLOAT NOT NULL,
+    "minValue" FLOAT NOT NULL CHECK ("minValue" < "maxValue"),
     "maxValue" FLOAT NOT NULL,
-    "alertThreshold" FLOAT NOT NULL
+    "lowerThreshold" FLOAT NOT NULL CHECK ("lowerThreshold" BETWEEN "minValue" AND "maxValue"),
+    "upperThreshold" FLOAT NOT NULL CHECK ("upperThreshold" BETWEEN "minValue" AND "maxValue")
+);
+
+CREATE TABLE "tblTelemetryData" (
+    "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
+    "telemetryParamId" UUID REFERENCES "tblTelemetryParameterization"("id"),
+    "value" FLOAT NOT NULL,
+    "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "tblAlerts" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
-    "alertValue" FLOAT NOT NULL,
-    "userId" UUID NOT NULL REFERENCES "tblUsers"("id"),
-    "alertTypeId" UUID NOT NULL REFERENCES "tblAlertTypes"("id"),
-    -- "telemetryDataId" UUID NOT NULL REFERENCES "tblTelemetryData"("id"),
-    "telemetryParamId" UUID NOT NULL REFERENCES "tblTelemetryParameterization"("id"),
-    "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    "message" VARCHAR(100) NOT NULL,
+    "telemetryDataId" UUID NOT NULL REFERENCES "tblTelemetryData"("id"),
+    "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE "tblAlertTypes" (
+CREATE TABLE "tblAlertUser" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
-    "alert_type" VARCHAR(100) NOT NULL
+    "alertId" UUID NOT NULL REFERENCES "tblAlerts"("id"),
+    "userId" UUID NOT NULL REFERENCES "tblUsers"("id"),
+    "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
-INSERT INTO 
-    "tblTelemetryParameterization" ("label", "initialValue", append, "minValue", "maxValue", "alertThreshold") 
-VALUES
-    ('Temperatura', 0, '°C', 0, 50, 45), 
-    ('Humedad', 0, '%', 0, 100, 90), 
-    ('Presión', 0, 'hPa', 0, 1000, 950),
-    ('Resistencia al gas', 0, 'kΩ', 0, 100, 80);
+SELECT * FROM "tblUsers" 
 
-INSERT INTO 
-    "tblAlertTypes" (alert_type) 
-VALUES
-    ('Umbral de temperatura alcanzado'),
-    ('Umbral de humedad alcanzado'),
-    ('Umbral de presión alcanzado'),
-    ('Umbral de resistencia al gas alcanzado');
+SELECT * FROM "tblTelemetryParameterization" 
+
+SELECT * FROM "tblTelemetryData"
+
+SELECT * FROM "tblAlerts" 
+
+SELECT * FROM "tblAlertUser" 

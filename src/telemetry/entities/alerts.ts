@@ -1,11 +1,11 @@
 import { Table, Column, Model, DataType, ForeignKey } from 'sequelize-typescript';
-import { TelemetryParameterization } from './telemetry-parameterization';
+import { TelemetryData } from './telemetry-data';
 
 @Table({
-  tableName: 'tblTelemetryData',
+  tableName: 'tblAlerts',
   timestamps: false,
 })
-export class TelemetryData extends Model<TelemetryData> {
+export class Alert extends Model<Alert> {
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
@@ -13,18 +13,18 @@ export class TelemetryData extends Model<TelemetryData> {
   })
   id: string;
 
-  @ForeignKey(() => TelemetryParameterization)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  message: string;
+
+  @ForeignKey(() => TelemetryData)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  telemetryParamId: string;
-
-  @Column({
-    type: DataType.FLOAT,
-    allowNull: false,
-  })
-  value: number;
+  telemetryDataId: string;
 
   @Column({
     type: DataType.DATE,
