@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { TelemetryController } from './telemetry.controller';
 import { TelemetryService } from './services/telemetry.service';
-import { TelemetryData } from './entities/telemetry-data';
+import { TelemetryData, TelemetryParameterization } from './entities';
 import { TelemetryGateway } from './telemetry.gateway';
 
 @Module({
@@ -13,7 +13,7 @@ import { TelemetryGateway } from './telemetry.gateway';
   imports: [
     ConfigModule.forRoot(),
 
-    SequelizeModule.forFeature([TelemetryData]),
+    SequelizeModule.forFeature([TelemetryData, TelemetryParameterization]),
   ],
 })
 export class TelemetryModule {}

@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { TelemetryDataFiltered, TelemetryDataModel } from '../interfaces/telemetry-data';
-import { TelemetryData } from '../entities/telemetry-data';
+import { TelemetryData, TelemetryParameterization } from '../entities';
 import { InjectModel } from '@nestjs/sequelize';
 import { TelemetryProcessResponse } from '../interfaces/telemetry-process-response';
 import { Op, Sequelize } from 'sequelize';
@@ -8,8 +8,8 @@ import { Op, Sequelize } from 'sequelize';
 @Injectable()
 export class TelemetryService {
   constructor(
-    @InjectModel(TelemetryData)
-    private readonly telemetryDataModel: typeof TelemetryData,
+    @InjectModel(TelemetryData) private readonly telemetryDataModel: typeof TelemetryData,
+    @InjectModel(TelemetryParameterization) private readonly telemetryParameterizationModel: typeof TelemetryParameterization,
   ) { }
 
   async process(data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
@@ -58,6 +58,14 @@ export class TelemetryService {
       }));
     } catch (error) {
       throw new InternalServerErrorException('Error fetching telemetry data');
+    }
+  }
+
+  async getParameterization(): Promise<TelemetryParameterization[]> {
+    try {
+      return await this.telemetryParameterizationModel.findAll();
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching telemetry parameterization');
     }
   }
 }
