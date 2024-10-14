@@ -14,9 +14,7 @@ export class TelemetryService {
 
   async process(data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
     try {
-      const createdAt = new Date().toISOString().split('T')[0];
-      const newModel = { ...data, createdAt };
-      const newTelemtricData = await this.telemetryDataModel.create(newModel);
+      const newTelemtricData = await this.telemetryDataModel.create(data);
       return {
         id: newTelemtricData.id,
         message: 'Data saved successfully',
@@ -32,7 +30,7 @@ export class TelemetryService {
     groupBy: 'day' | 'hour'
   ): Promise<TelemetryDataFiltered[]> {
     try {
-      let datePart = Sequelize.literal(`CAST(DATE_TRUNC('${groupBy}', "timestamp") AS VARCHAR)`);
+      const datePart = Sequelize.literal(`CAST(DATE_TRUNC('${groupBy}', "timestamp") AS VARCHAR)`);
 
       const telemetryData = await this.telemetryDataModel.findAll({
         attributes: [
@@ -43,8 +41,8 @@ export class TelemetryService {
           [Sequelize.fn('AVG', Sequelize.col('gas_resistance')), 'avg_gas_resistance'],
         ],
         where: {
-          createdAt: {
-            [Op.between]: [initDate, endDate]
+          timestamp: {
+            [Op.between]: [`${initDate} 00:00:00.000 -05:00`, `${endDate} 23:59:59.999 -05:00`],
           },
         },
         group: ['groupedDate'],
