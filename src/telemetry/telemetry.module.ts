@@ -4,7 +4,12 @@ import { ConfigModule } from '@nestjs/config';
 
 import { TelemetryController } from './telemetry.controller';
 import { TelemetryService } from './services/telemetry.service';
-import { Alert, AlertUser, TelemetryData, TelemetryParameterization } from './entities';
+import {
+  Alert,
+  AlertUser,
+  TelemetryData,
+  TelemetryParameterization,
+} from './entities';
 import { TelemetryGateway } from './telemetry.gateway';
 import { User } from '../auth/entities/user.entity';
 
@@ -14,7 +19,13 @@ import { User } from '../auth/entities/user.entity';
   imports: [
     ConfigModule.forRoot(),
 
-    SequelizeModule.forFeature([User, TelemetryData, TelemetryParameterization, Alert, AlertUser]),
+    SequelizeModule.forFeature([
+      User,
+      TelemetryData,
+      TelemetryParameterization,
+      Alert,
+      AlertUser,
+    ]),
   ],
 })
 export class TelemetryModule {}

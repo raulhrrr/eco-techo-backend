@@ -13,15 +13,14 @@ export const sequelizeConfig: SequelizeModuleOptions = {
     useUTC: false,
     dateStrings: true,
     typeCast: function (field, next) {
-      if ([
-        'DATE',
-        'DATETIME',
-        'TIMESTAMP',
-        'TIMESTAMP WITH TIME ZONE'
-      ].includes(field.type)) {
-        return field.string()
+      if (
+        ['DATE', 'DATETIME', 'TIMESTAMP', 'TIMESTAMP WITH TIME ZONE'].includes(
+          field.type,
+        )
+      ) {
+        return field.string();
       }
-      return next()
+      return next();
     },
   },
   timezone: '-05:00',

@@ -1,4 +1,10 @@
-import { Table, Column, Model, DataType, ForeignKey } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  ForeignKey,
+} from 'sequelize-typescript';
 import { TelemetryData } from './telemetry-data';
 
 @Table({

@@ -1,6 +1,9 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { TelemetryService } from './services/telemetry.service';
-import { TelemetryDataFiltered, TelemetryDataModel } from './interfaces/telemetry-data';
+import {
+  TelemetryDataFiltered,
+  TelemetryDataModel,
+} from './interfaces/telemetry-data';
 import { TelemetryProcessResponse } from './interfaces/telemetry-process-response';
 import { TelemetryGateway } from './telemetry.gateway';
 import { TelemetryParameterization } from './entities';
@@ -9,11 +12,13 @@ import { TelemetryParameterization } from './entities';
 export class TelemetryController {
   constructor(
     private readonly telemetryService: TelemetryService,
-    private readonly telemetryGateway: TelemetryGateway
-  ) { }
+    private readonly telemetryGateway: TelemetryGateway,
+  ) {}
 
   @Post('catch-data')
-  async process(@Body() data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
+  async process(
+    @Body() data: TelemetryDataModel,
+  ): Promise<TelemetryProcessResponse> {
     this.telemetryGateway.emitTelemetryData(data);
     return await this.telemetryService.process(data);
   }
@@ -24,7 +29,11 @@ export class TelemetryController {
     @Query('endDate') endDate: string,
     @Query('groupBy') groupBy: 'day' | 'hour',
   ): Promise<TelemetryDataFiltered[]> {
-    return await this.telemetryService.getTelemetryByRange(initDate, endDate, groupBy);
+    return await this.telemetryService.getTelemetryByRange(
+      initDate,
+      endDate,
+      groupBy,
+    );
   }
 
   @Get('parameterization')
