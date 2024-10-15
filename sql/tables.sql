@@ -73,3 +73,8 @@ SELECT * FROM "tblTelemetryData"
 SELECT * FROM "tblAlerts" 
 
 SELECT * FROM "tblAlertUser" 
+
+SELECT ttd.value, ttp.label FROM "tblTelemetryData" ttd 
+INNER JOIN "tblTelemetryParameterization" ttp ON ttp.id = ttd."telemetryParamId"
+ORDER BY "timestamp" DESC
+LIMIT 4

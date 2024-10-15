@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { TelemetryProcessResponse } from '../interfaces/telemetry-process-response';
 import { Op, Sequelize } from 'sequelize';
 import { User } from '../../auth/entities/user.entity';
+import { GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../constants';
+import { sendEmail } from '../../shared/helpers/mail';
 
 @Injectable()
 export class TelemetryService {
@@ -20,18 +22,21 @@ export class TelemetryService {
 
   private generateTelemetryRecords(data: TelemetryDataModel) {
     return [
-      { telemetryParamId: this.telemetryParams.find(p => p.label === 'Temperatura').id, value: data.temperature },
-      { telemetryParamId: this.telemetryParams.find(p => p.label === 'Humedad').id, value: data.humidity },
-      { telemetryParamId: this.telemetryParams.find(p => p.label === 'Presión').id, value: data.pressure },
-      { telemetryParamId: this.telemetryParams.find(p => p.label === 'Resistencia al gas').id, value: data.gas_resistance },
+      { telemetryParamId: this.telemetryParams.find(p => p.label === TEMPERATURE).id, value: data.temperature },
+      { telemetryParamId: this.telemetryParams.find(p => p.label === HUMIDITY).id, value: data.humidity },
+      { telemetryParamId: this.telemetryParams.find(p => p.label === PRESSURE).id, value: data.pressure },
+      { telemetryParamId: this.telemetryParams.find(p => p.label === GAS_RESISTANCE).id, value: data.gas_resistance },
     ];
+  }
+
+  private async sendEmailNotification(activeUsers: User[], alerts: Alert[]) {
+    const emails = activeUsers.map(user => user.email);
+    const message = alerts.map(alert => alert.message).join('\n');
+    await sendEmail(emails, 'Alerta de Telemetría Eco-Techo', message);
   }
 
   private async generateAlerts(telemetryData: TelemetryData[]) {
     const newAlerts = [];
-    let storedAlerts: Alert[] = [];
-
-    const activeUsers = await this.userModel.findAll({ where: { isActive: true } });
 
     for (const data of telemetryData) {
       const param = this.telemetryParams.find(p => p.id === data.telemetryParamId);
@@ -51,10 +56,10 @@ export class TelemetryService {
       }
     }
 
-    if (newAlerts.length > 0) {
-      storedAlerts = await this.alertModel.bulkCreate(newAlerts);
-    }
+    if (newAlerts.length === 0) return;
 
+    const storedAlerts = await this.alertModel.bulkCreate(newAlerts);
+    const activeUsers = await this.userModel.findAll({ where: { isActive: true } });
     const alertUsers = activeUsers.map(user => {
       return storedAlerts.map(alert => {
         return { userId: user.id, alertId: alert.id };
@@ -64,6 +69,8 @@ export class TelemetryService {
     if (alertUsers.length > 0) {
       await this.alertUserModel.bulkCreate(alertUsers);
     }
+
+    await this.sendEmailNotification(activeUsers, storedAlerts);
   }
 
   async process(data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
@@ -131,16 +138,16 @@ export class TelemetryService {
         const currentData = resultMap.get(groupedDate);
 
         switch (label) {
-          case 'Temperatura':
+          case TEMPERATURE:
             currentData.avg_temperature = avgValue;
             break;
-          case 'Humedad':
+          case HUMIDITY:
             currentData.avg_humidity = avgValue;
             break;
-          case 'Presión':
+          case PRESSURE:
             currentData.avg_pressure = avgValue;
             break;
-          case 'Resistencia al gas':
+          case GAS_RESISTANCE:
             currentData.avg_gas_resistance = avgValue;
             break;
         }
@@ -154,9 +161,7 @@ export class TelemetryService {
 
   async getParameterization(): Promise<TelemetryParameterization[]> {
     try {
-      if (!this.telemetryParams) {
-        this.telemetryParams = await this.telemetryParameterizationModel.findAll();
-      }
+      this.telemetryParams = await this.telemetryParameterizationModel.findAll();
       return this.telemetryParams;
     } catch (error) {
       throw new InternalServerErrorException('Error fetching telemetry parameterization');
