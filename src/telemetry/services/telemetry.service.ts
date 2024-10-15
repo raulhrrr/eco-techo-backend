@@ -68,9 +68,8 @@ export class TelemetryService {
 
     if (alertUsers.length > 0) {
       await this.alertUserModel.bulkCreate(alertUsers);
+      await this.sendEmailNotification(activeUsers, storedAlerts);
     }
-
-    await this.sendEmailNotification(activeUsers, storedAlerts);
   }
 
   async process(data: TelemetryDataModel): Promise<TelemetryProcessResponse> {
