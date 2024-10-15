@@ -16,12 +16,12 @@ DELETE FROM "tblAlerts"
 
 DELETE FROM "tblTelemetryData" 
 
-TRUNCATE TABLE "tblTelemetryParameterization";
+DELETE FROM "tblTelemetryParameterization";
 
-TRUNCATE TABLE "tblUsers";
+DELETE FROM "tblUsers";
 
 /* CREATES */
-CREATE TABLE "tblUsers" (
+CREATE TABLE IF NOT EXISTS "tblUsers" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "email" VARCHAR(255) UNIQUE NOT NULL,
     "name" VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE "tblUsers" (
     "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE "tblTelemetryParameterization" (
+CREATE TABLE IF NOT EXISTS "tblTelemetryParameterization" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "label" VARCHAR(50) UNIQUE NOT NULL,
     "initialValue" FLOAT NOT NULL,
@@ -42,39 +42,23 @@ CREATE TABLE "tblTelemetryParameterization" (
     "upperThreshold" FLOAT NOT NULL CHECK ("upperThreshold" BETWEEN "minValue" AND "maxValue")
 );
 
-CREATE TABLE "tblTelemetryData" (
+CREATE TABLE IF NOT EXISTS "tblTelemetryData" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "telemetryParamId" UUID REFERENCES "tblTelemetryParameterization"("id"),
     "value" FLOAT NOT NULL,
     "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE "tblAlerts" (
+CREATE TABLE IF NOT EXISTS "tblAlerts" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "message" VARCHAR(100) NOT NULL,
     "telemetryDataId" UUID NOT NULL REFERENCES "tblTelemetryData"("id"),
     "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE "tblAlertUser" (
+CREATE TABLE IF NOT EXISTS "tblAlertUser" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "alertId" UUID NOT NULL REFERENCES "tblAlerts"("id"),
     "userId" UUID NOT NULL REFERENCES "tblUsers"("id"),
     "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
-
-
-SELECT * FROM "tblUsers" 
-
-SELECT * FROM "tblTelemetryParameterization" 
-
-SELECT * FROM "tblTelemetryData"
-
-SELECT * FROM "tblAlerts" 
-
-SELECT * FROM "tblAlertUser" 
-
-SELECT ttd.value, ttp.label FROM "tblTelemetryData" ttd 
-INNER JOIN "tblTelemetryParameterization" ttp ON ttp.id = ttd."telemetryParamId"
-ORDER BY "timestamp" DESC
-LIMIT 4
