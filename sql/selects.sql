@@ -64,3 +64,8 @@ SELECT ttd.value, ttp.label FROM "tblTelemetryData" ttd
 INNER JOIN "tblTelemetryParameterization" ttp ON ttp.id = ttd."telemetryParamId"
 ORDER BY "timestamp" DESC
 LIMIT 4
+
+
+SELECT * FROM "tblUsers" tu 
+INNER JOIN "tblAlertUser" tau ON tu.id = tau."userId"
+INNER JOIN "tblAlerts" ta ON ta.id = tau."alertId"
