@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
 import { TelemetryService } from './services/telemetry.service';
 import {
   TelemetryDataFiltered,
@@ -7,6 +7,7 @@ import {
 import { TelemetryProcessResponse } from './interfaces/telemetry-process-response';
 import { TelemetryGateway } from './telemetry.gateway';
 import { TelemetryParameterization } from './entities';
+// import { UpdateTelemetryParameterizationDto } from './dto/update-telemetry-parameterization.dto';
 
 @Controller('telemetry')
 export class TelemetryController {
@@ -39,5 +40,12 @@ export class TelemetryController {
   @Get('parameterization')
   async getParameterization(): Promise<TelemetryParameterization[]> {
     return await this.telemetryService.getParameterization();
+  }
+
+  @Patch('parameterization')
+  async updateParameterization(
+    @Body() parameterization: any,
+  ): Promise<TelemetryProcessResponse> {
+    return await this.telemetryService.updateParameterization(parameterization);
   }
 }

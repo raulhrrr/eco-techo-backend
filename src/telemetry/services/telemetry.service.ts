@@ -7,6 +7,7 @@ import { Op, Sequelize } from 'sequelize';
 import { User } from '../../auth/entities/user.entity';
 import { GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../constants';
 import { sendEmail } from '../../shared/helpers/mail';
+import { UpdateTelemetryParameterizationDto } from '../dto/update-telemetry-parameterization.dto';
 
 @Injectable()
 export class TelemetryService {
@@ -80,7 +81,7 @@ export class TelemetryService {
 
       await this.generateAlerts(storedTelemetryData);
 
-      return { message: 'Data saved successfully' };
+      return { statusCode: 200, message: 'Data saved successfully' };
     } catch (error) {
       throw new InternalServerErrorException('Something terrible happened!!!');
     }
@@ -164,6 +165,22 @@ export class TelemetryService {
       return this.telemetryParams;
     } catch (error) {
       throw new InternalServerErrorException('Error fetching telemetry parameterization');
+    }
+  }
+
+  async updateParameterization(parameterization: UpdateTelemetryParameterizationDto): Promise<TelemetryProcessResponse> {
+    try {
+      const updatedParam = await this.telemetryParameterizationModel.update(parameterization, {
+        where: { id: parameterization.id }
+      });
+
+      if (updatedParam[0] === 0) {
+        throw new InternalServerErrorException('Parameterization not found');
+      }
+
+      return { statusCode: 200, message: `El parámetro ${parameterization.label} se ha actualizado correctamente.` };
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating telemetry parameterization');
     }
   }
 }
