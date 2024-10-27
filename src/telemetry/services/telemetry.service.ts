@@ -178,7 +178,7 @@ export class TelemetryService {
         throw new InternalServerErrorException('Parámetro no encontrado');
       }
 
-      return { statusCode: 200, message: `El parámetro ${parameterization.label.toLowerCase()} se ha actualizado correctamente.` };
+      return { statusCode: 200, message: `El parámetro ${parameterization.label.toLowerCase()} se ha actualizado correctamente` };
     } catch (error) {
       throw new InternalServerErrorException(`Error actualizando el parámetro ${parameterization.label.toLowerCase()}`);
     }
