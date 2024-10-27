@@ -81,9 +81,9 @@ export class TelemetryService {
 
       await this.generateAlerts(storedTelemetryData);
 
-      return { statusCode: 200, message: 'Data saved successfully' };
+      return { statusCode: 200, message: 'Datos almacenados correctamente' };
     } catch (error) {
-      throw new InternalServerErrorException('Something terrible happened!!!');
+      throw new InternalServerErrorException('Error inesperado');
     }
   }
 
@@ -155,7 +155,7 @@ export class TelemetryService {
 
       return Array.from(resultMap.values());
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching telemetry data');
+      throw new InternalServerErrorException('Error obteniendo los datos de telemetría');
     }
   }
 
@@ -164,7 +164,7 @@ export class TelemetryService {
       this.telemetryParams = await this.telemetryParameterizationModel.findAll();
       return this.telemetryParams;
     } catch (error) {
-      throw new InternalServerErrorException('Error fetching telemetry parameterization');
+      throw new InternalServerErrorException('Error obteniendo los datos de parametrización');
     }
   }
 
@@ -175,12 +175,12 @@ export class TelemetryService {
       });
 
       if (updatedParam[0] === 0) {
-        throw new InternalServerErrorException('Parameterization not found');
+        throw new InternalServerErrorException('Parámetro no encontrado');
       }
 
-      return { statusCode: 200, message: `El parámetro ${parameterization.label} se ha actualizado correctamente.` };
+      return { statusCode: 200, message: `El parámetro ${parameterization.label.toLowerCase()} se ha actualizado correctamente.` };
     } catch (error) {
-      throw new InternalServerErrorException('Error updating telemetry parameterization');
+      throw new InternalServerErrorException(`Error actualizando el parámetro ${parameterization.label.toLowerCase()}`);
     }
   }
 }

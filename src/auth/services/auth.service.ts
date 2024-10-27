@@ -33,21 +33,22 @@ export class AuthService implements IAuthService {
       return this.getResponse(newUser);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new BadRequestException(`${registerDto.email} already exists!`);
+        throw new BadRequestException(`${registerDto.email} ya existe`);
       }
-      throw new InternalServerErrorException('Something terrible happened!!!');
+      throw new InternalServerErrorException('Error inesperado');
     }
   }
 
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
     const user = await this.userModel.findOne({ where: { email } });
+    const message = 'Credenciales no válidas';
     if (!user) {
-      throw new UnauthorizedException('Not valid credentials - email');
+      throw new UnauthorizedException(`${message} - correo`);
     }
     const isPasswordValid = bcryptjs.compareSync(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Not valid credentials - password');
+      throw new UnauthorizedException(`${message} - contraseña`);
     }
     return this.getResponse(user);
   }
@@ -63,7 +64,7 @@ export class AuthService implements IAuthService {
   async findUserById(id: string): Promise<User> {
     const user = await this.userModel.findByPk(id);
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
     }
     return user;
   }
