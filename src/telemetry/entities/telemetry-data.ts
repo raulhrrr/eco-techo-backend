@@ -4,8 +4,11 @@ import {
   Model,
   DataType,
   ForeignKey,
+  HasOne,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { TelemetryParameterization } from './telemetry-parameterization';
+import { Alert } from './alerts';
 
 @Table({
   tableName: 'tblTelemetryData',
@@ -26,6 +29,9 @@ export class TelemetryData extends Model<TelemetryData> {
   })
   telemetryParamId: string;
 
+  @BelongsTo(() => TelemetryParameterization)
+  telemetryParameterization: TelemetryParameterization;
+
   @Column({
     type: DataType.FLOAT,
     allowNull: false,
@@ -38,4 +44,7 @@ export class TelemetryData extends Model<TelemetryData> {
     allowNull: false,
   })
   timestamp: Date;
+
+  @HasOne(() => Alert)
+  alert: Alert;
 }

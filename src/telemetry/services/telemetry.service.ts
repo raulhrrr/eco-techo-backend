@@ -4,8 +4,8 @@ import { Alert, AlertUser, TelemetryData, TelemetryParameterization } from '../e
 import { InjectModel } from '@nestjs/sequelize';
 import { TelemetryProcessResponse } from '../interfaces/telemetry-process-response';
 import { Op, Sequelize } from 'sequelize';
-import { User } from '../../auth/entities/user.entity';
-import { GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../constants';
+import { Role, User } from '../../auth/entities';
+import { ALERT_ROLE, GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../../constants';
 import { sendEmail } from '../../shared/helpers/mail';
 import { UpdateTelemetryParameterizationDto } from '../dto/update-telemetry-parameterization.dto';
 
@@ -44,6 +44,8 @@ export class TelemetryService {
 
       if (!param) continue;
 
+      if (!param.isAlertEnabled) continue;
+
       if (data.value > param.upperThreshold) {
         newAlerts.push({
           telemetryDataId: data.id,
@@ -60,7 +62,13 @@ export class TelemetryService {
     if (newAlerts.length === 0) return;
 
     const storedAlerts = await this.alertModel.bulkCreate(newAlerts);
-    const activeUsers = await this.userModel.findAll({ where: { isActive: true } });
+    const activeUsers = await this.userModel.findAll({
+      where: { isActive: true },
+      include: [{
+        model: Role,
+        where: { name: ALERT_ROLE },
+      }]
+    });
     const alertUsers = activeUsers.map(user => {
       return storedAlerts.map(alert => {
         return { userId: user.id, alertId: alert.id };
@@ -181,6 +189,28 @@ export class TelemetryService {
       return { statusCode: 200, message: `El parámetro ${parameterization.label.toLowerCase()} se ha actualizado correctamente` };
     } catch (error) {
       throw new InternalServerErrorException(`Error actualizando el parámetro ${parameterization.label.toLowerCase()}`);
+    }
+  }
+
+  async getAlerts(initDate: string, endDate: string): Promise<Alert[]> {
+    try {
+      const alerts = await this.alertModel.findAll({
+        where: {
+          timestamp: {
+            [Op.between]: [`${initDate} 00:00:00.000 -05:00`, `${endDate} 23:59:59.999 -05:00`],
+          },
+        },
+        include: [
+          {
+            model: this.telemetryDataModel,
+            include: [this.telemetryParameterizationModel],
+          },
+        ],
+      });
+
+      return alerts;
+    } catch (error) {
+      throw new InternalServerErrorException('Error obteniendo los datos de alertas');
     }
   }
 }

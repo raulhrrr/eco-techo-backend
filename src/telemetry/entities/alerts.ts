@@ -4,6 +4,7 @@ import {
   Model,
   DataType,
   ForeignKey,
+  BelongsTo
 } from 'sequelize-typescript';
 import { TelemetryData } from './telemetry-data';
 
@@ -31,6 +32,9 @@ export class Alert extends Model<Alert> {
     allowNull: false,
   })
   telemetryDataId: string;
+
+  @BelongsTo(() => TelemetryData)
+  telemetryData: TelemetryData;
 
   @Column({
     type: DataType.DATE,

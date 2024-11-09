@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './services/auth.service';
-import { User } from './entities/user.entity';
+import { Role, User } from './entities';
 
 @Module({
   controllers: [AuthController],
@@ -13,7 +13,7 @@ import { User } from './entities/user.entity';
   imports: [
     ConfigModule.forRoot(),
 
-    SequelizeModule.forFeature([User]),
+    SequelizeModule.forFeature([User, Role]),
 
     JwtModule.register({
       global: true,

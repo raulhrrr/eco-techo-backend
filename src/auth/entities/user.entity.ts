@@ -1,4 +1,5 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Role } from './role.entity';
 
 @Table({
   tableName: 'tblUsers',
@@ -20,7 +21,6 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
   })
   password: string;
 
@@ -35,6 +35,16 @@ export class User extends Model<User> {
     defaultValue: true,
   })
   isActive: boolean;
+
+  @ForeignKey(() => Role)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  roleId: number;
+
+  @BelongsTo(() => Role)
+  role: Role;
 
   @Column({
     type: DataType.DATE,

@@ -32,3 +32,12 @@ VALUES(
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
 );
+
+INSERT INTO
+    "tblRoles" (
+        id,
+        "name"
+    )
+VALUES
+    (1, 'Alerta'),
+    (2, 'Administrador');

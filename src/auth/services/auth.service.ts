@@ -12,7 +12,9 @@ import { RegisterUserDto, LoginDto } from '../dto';
 import { JwtPayload } from '../interfaces/jwt-payload';
 import { LoginResponse } from '../interfaces/login-response';
 import { IAuthService } from './auth.service.interface';
-import { User } from '../entities/user.entity';
+import { Role, User } from '../entities';
+import { TelemetryProcessResponse } from 'src/telemetry/interfaces/telemetry-process-response';
+import { ADMINISTRATOR_ROLE } from 'src/constants';
 
 @Injectable()
 export class AuthService implements IAuthService {
@@ -23,14 +25,14 @@ export class AuthService implements IAuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterUserDto): Promise<LoginResponse> {
+  async register(registerDto: RegisterUserDto): Promise<TelemetryProcessResponse> {
     try {
       const { password, ...userData } = registerDto;
-      const newUser = await this.userModel.create({
-        password: bcryptjs.hashSync(password, 10),
+      await this.userModel.create({
+        password: password ? bcryptjs.hashSync(password, 10) : '',
         ...userData,
       });
-      return this.getResponse(newUser);
+      return { statusCode: 201, message: 'Usuario creado exitósamente' };
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
         throw new BadRequestException(`${registerDto.email} ya existe`);
@@ -41,14 +43,22 @@ export class AuthService implements IAuthService {
 
   async login(loginDto: LoginDto): Promise<LoginResponse> {
     const { email, password } = loginDto;
-    const user = await this.userModel.findOne({ where: { email } });
+    const user = await this.userModel.findOne({
+      where: { email, isActive: true },
+      include: [{
+        model: Role,
+        where: { name: ADMINISTRATOR_ROLE },
+      }]
+    });
+
     const message = 'Credenciales no válidas';
     if (!user) {
-      throw new UnauthorizedException(`${message} - correo`);
+      throw new UnauthorizedException(`${message} - Correo`);
     }
+
     const isPasswordValid = bcryptjs.compareSync(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException(`${message} - contraseña`);
+      throw new UnauthorizedException(`${message} - Contraseña`);
     }
     return this.getResponse(user);
   }

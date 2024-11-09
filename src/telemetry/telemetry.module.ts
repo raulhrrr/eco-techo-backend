@@ -11,7 +11,7 @@ import {
   TelemetryParameterization,
 } from './entities';
 import { TelemetryGateway } from './telemetry.gateway';
-import { User } from '../auth/entities/user.entity';
+import { User } from '../auth/entities';
 
 @Module({
   controllers: [TelemetryController],

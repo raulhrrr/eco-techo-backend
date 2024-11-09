@@ -25,8 +25,9 @@ CREATE TABLE IF NOT EXISTS "tblUsers" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "email" VARCHAR(255) UNIQUE NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "password" VARCHAR(255) NOT NULL,
+    "password" VARCHAR(255),
     "isActive" BOOLEAN DEFAULT TRUE,
+    "roleId" INT NOT NULL REFERENCES "tblRoles"("id"),
     "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -39,7 +40,10 @@ CREATE TABLE IF NOT EXISTS "tblTelemetryParameterization" (
     "minValue" FLOAT NOT NULL CHECK ("minValue" < "maxValue"),
     "maxValue" FLOAT NOT NULL,
     "lowerThreshold" FLOAT NOT NULL CHECK ("lowerThreshold" BETWEEN "minValue" AND "maxValue"),
-    "upperThreshold" FLOAT NOT NULL CHECK ("upperThreshold" BETWEEN "minValue" AND "maxValue")
+    "upperThreshold" FLOAT NOT NULL CHECK ("upperThreshold" BETWEEN "minValue" AND "maxValue"),
+    "isAlertEnabled" BOOLEAN DEFAULT TRUE NOT NULL,
+    "createdAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "tblTelemetryData" (
@@ -61,4 +65,9 @@ CREATE TABLE IF NOT EXISTS "tblAlertUser" (
     "alertId" UUID NOT NULL REFERENCES "tblAlerts"("id"),
     "userId" UUID NOT NULL REFERENCES "tblUsers"("id"),
     "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "tblRoles" (
+    "id" INT PRIMARY KEY NOT NULL,
+    "name" VARCHAR(20) NOT NULL
 );

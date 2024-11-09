@@ -7,4 +7,5 @@ export class TelemetryParameterizationDto {
   maxValue: number;
   lowerThreshold: number;
   upperThreshold: number;
+  isAlertEnabled: boolean;
 }

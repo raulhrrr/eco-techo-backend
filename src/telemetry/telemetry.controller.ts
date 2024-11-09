@@ -6,8 +6,7 @@ import {
 } from './interfaces/telemetry-data';
 import { TelemetryProcessResponse } from './interfaces/telemetry-process-response';
 import { TelemetryGateway } from './telemetry.gateway';
-import { TelemetryParameterization } from './entities';
-// import { UpdateTelemetryParameterizationDto } from './dto/update-telemetry-parameterization.dto';
+import { Alert, TelemetryParameterization } from './entities';
 
 @Controller('telemetry')
 export class TelemetryController {
@@ -47,5 +46,13 @@ export class TelemetryController {
     @Body() parameterization: any,
   ): Promise<TelemetryProcessResponse> {
     return await this.telemetryService.updateParameterization(parameterization);
+  }
+
+  @Get('alerts')
+  async getAlerts(
+    @Query('initDate') initDate: string,
+    @Query('endDate') endDate: string,
+  ): Promise<Alert[]> {
+    return await this.telemetryService.getAlerts(initDate, endDate);
   }
 }

@@ -69,3 +69,28 @@ LIMIT 4
 SELECT * FROM "tblUsers" tu 
 INNER JOIN "tblAlertUser" tau ON tu.id = tau."userId"
 INNER JOIN "tblAlerts" ta ON ta.id = tau."alertId"
+
+
+
+
+SELECT
+    ta.message,
+    ta."timestamp",
+    ttd.value,
+    ttp."label",
+    ttp.append,
+    ttp."minValue",
+    ttp."maxValue",
+    ttp."lowerThreshold",
+    ttp."upperThreshold"
+FROM "tblAlerts" ta 
+INNER JOIN "tblTelemetryData" ttd
+    ON ttd.id = ta."telemetryDataId" 
+INNER JOIN "tblTelemetryParameterization" ttp 
+    ON ttp.id = ttd."telemetryParamId"
+ORDER BY "timestamp" DESC 
+
+
+SELECT * FROM "tblUsers" tu 
+
+SELECT * FROM "tblRoles"

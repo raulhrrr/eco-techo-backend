@@ -1,8 +1,8 @@
-import { Table, Column, Model, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { TelemetryData } from './telemetry-data';
 
 @Table({
   tableName: 'tblTelemetryParameterization',
-  timestamps: false,
 })
 export class TelemetryParameterization extends Model<TelemetryParameterization> {
   @Column({
@@ -54,4 +54,27 @@ export class TelemetryParameterization extends Model<TelemetryParameterization> 
     allowNull: false,
   })
   upperThreshold: number;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  })
+  isAlertEnabled: boolean;
+
+  @Column({
+    type: DataType.DATE,
+    defaultValue: DataType.NOW,
+    allowNull: false,
+  })
+  createdAt: Date;
+
+  @Column({
+    type: DataType.DATE,
+    defaultValue: DataType.NOW,
+    allowNull: false,
+  })
+  updatedAt: Date;
+
+  @HasMany(() => TelemetryData)
+  telemetryData: TelemetryData[];
 }
