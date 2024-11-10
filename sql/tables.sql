@@ -21,6 +21,11 @@ DELETE FROM "tblTelemetryParameterization";
 DELETE FROM "tblUsers";
 
 /* CREATES */
+CREATE TABLE IF NOT EXISTS "tblRoles" (
+    "id" INT PRIMARY KEY NOT NULL,
+    "name" VARCHAR(20) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS "tblUsers" (
     "id" UUID PRIMARY KEY DEFAULT GEN_RANDOM_UUID(),
     "email" VARCHAR(255) UNIQUE NOT NULL,
@@ -65,9 +70,4 @@ CREATE TABLE IF NOT EXISTS "tblAlertUser" (
     "alertId" UUID NOT NULL REFERENCES "tblAlerts"("id"),
     "userId" UUID NOT NULL REFERENCES "tblUsers"("id"),
     "timestamp" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS "tblRoles" (
-    "id" INT PRIMARY KEY NOT NULL,
-    "name" VARCHAR(20) NOT NULL
 );
