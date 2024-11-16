@@ -4,8 +4,8 @@ import { Alert, AlertUser, TelemetryData, TelemetryParameterization } from '../e
 import { InjectModel } from '@nestjs/sequelize';
 import { TelemetryProcessResponse } from '../interfaces/telemetry-process-response';
 import { Op, Sequelize } from 'sequelize';
-import { Role, User } from '../../auth/entities';
-import { ALERT_ROLE, GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../../constants';
+import { User } from '../../auth/entities';
+import { GAS_RESISTANCE, HUMIDITY, PRESSURE, TEMPERATURE } from '../../constants';
 import { sendEmail } from '../../shared/helpers/mail';
 import { UpdateTelemetryParameterizationDto } from '../dto/update-telemetry-parameterization.dto';
 
@@ -62,13 +62,7 @@ export class TelemetryService {
     if (newAlerts.length === 0) return;
 
     const storedAlerts = await this.alertModel.bulkCreate(newAlerts);
-    const activeUsers = await this.userModel.findAll({
-      where: { isActive: true },
-      include: [{
-        model: Role,
-        where: { name: ALERT_ROLE },
-      }]
-    });
+    const activeUsers = await this.userModel.findAll({ where: { isActive: true } });
     const alertUsers = activeUsers.map(user => {
       return storedAlerts.map(alert => {
         return { userId: user.id, alertId: alert.id };
