@@ -1,26 +1,3 @@
-/* DROPS */
-DROP TABLE IF EXISTS "tblAlertUser";
-
-DROP TABLE IF EXISTS "tblAlerts";
-
-DROP TABLE IF EXISTS "tblTelemetryData";
-
-DROP TABLE IF EXISTS "tblTelemetryParameterization";
-
-DROP TABLE IF EXISTS "tblUsers";
-
-/* TRUNCATES */
-DELETE FROM "tblAlertUser"
-
-DELETE FROM "tblAlerts" 
-
-DELETE FROM "tblTelemetryData" 
-
-DELETE FROM "tblTelemetryParameterization";
-
-DELETE FROM "tblUsers";
-
-/* CREATES */
 CREATE TABLE IF NOT EXISTS "tblRoles" (
     "id" INT PRIMARY KEY NOT NULL,
     "name" VARCHAR(20) NOT NULL
