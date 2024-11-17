@@ -7,13 +7,14 @@ INSERT INTO
         "minValue",
         "maxValue",
         "lowerThreshold",
-        "upperThreshold"
+        "upperThreshold",
+        "isAlertEnabled"
     )
 VALUES
-    ('Temperatura', 0, '°C', 0, 50, 5, 45),
-    ('Humedad', 0, '%', 0, 100, 10, 90),
-    ('Presión', 0, 'hPa', 0, 1000, 250, 950),
-    ('Resistencia al gas', 0, 'kΩ', 0, 100, 20, 80);
+    ('Temperatura', 0, '°C', 0, 50, 5, 45, FALSE),
+    ('Humedad', 0, '%', 0, 100, 10, 90, FALSE),
+    ('Presión', 0, 'hPa', 0, 1000, 250, 950, FALSE),
+    ('Resistencia al gas', 0, 'kΩ', 0, 100, 20, 80, FALSE);
 
 -- INSERT INTO
 --     "tblUsers" (
