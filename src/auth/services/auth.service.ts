@@ -32,7 +32,7 @@ export class AuthService implements IAuthService {
         password: password ? bcryptjs.hashSync(password, 10) : '',
         ...userData,
       });
-      return { statusCode: 201, message: 'Usuario creado exitósamente' };
+      return { statusCode: 201, message: 'Usuario creado exitosamente' };
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
         throw new BadRequestException(`${registerDto.email} ya existe`);
