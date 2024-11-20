@@ -1,7 +1,16 @@
-export interface TelemetryDataModel {
+import { ApiProperty } from "@nestjs/swagger";
+
+export class TelemetryDataModel {
+  @ApiProperty({ description: "Temperatura medida" })
   temperature: number;
+
+  @ApiProperty({ description: "Humedad medida" })
   humidity: number;
+
+  @ApiProperty({ description: "Presión medida" })
   pressure: number;
+
+  @ApiProperty({ description: "Resistencia de gas medida" })
   gas_resistance: number;
 }
 
