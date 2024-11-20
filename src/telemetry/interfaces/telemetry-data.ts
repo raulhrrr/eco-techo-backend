@@ -1,15 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsNumber } from "class-validator";
 
 export class TelemetryDataModel {
+  @IsNumber()
   @ApiProperty({ description: "Temperatura medida" })
   temperature: number;
-
+  
+  @IsNumber()
   @ApiProperty({ description: "Humedad medida" })
   humidity: number;
-
+  
+  @IsNumber()
   @ApiProperty({ description: "Presión medida" })
   pressure: number;
-
+  
+  @IsNumber()
   @ApiProperty({ description: "Resistencia de gas medida" })
   gas_resistance: number;
 }
