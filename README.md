@@ -17,5 +17,5 @@ npm run start:dev
 2. Ejecutar el siguiente comando:
 
 ```
-docker compose --env-file .env up -d
+docker compose --env-file .env up -d --build
 ```
