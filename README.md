@@ -7,6 +7,7 @@
 2. Ejecutar el siguiente comando:
 
 ```
+npm i -f
 npm run start:dev
 ```
 
